@@ -1,8 +1,9 @@
 package com.IntelStream.domain.model;
 
 
-import lombok.Value;
 import lombok.Builder;
+import lombok.Value;
+
 import java.time.LocalDateTime;
 
 @Value
