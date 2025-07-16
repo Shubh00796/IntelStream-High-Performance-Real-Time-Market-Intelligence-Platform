@@ -1,0 +1,55 @@
+# Application files
+HELP.md
+
+# Build outputs
+target/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Maven Wrapper
+.mvn/
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle (in case you switch later or mix tools)
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Ignore .env file containing sensitive config (like DB passwords)
+.env
+
+# Ignore generated JARs
+*.jar
+*.war
+
+# IDE Configs
+
+## IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+## VS Code
+.vscode/
+
+## Eclipse/STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+## NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
