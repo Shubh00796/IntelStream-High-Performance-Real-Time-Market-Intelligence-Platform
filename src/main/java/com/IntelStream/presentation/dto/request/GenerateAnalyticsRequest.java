@@ -27,7 +27,7 @@ public class GenerateAnalyticsRequest {
     Integer movingAveragePeriod50 = 50;
 
     @Builder.Default
-    Integer rsiPeriod = 14;
+    Integer rsiPeriod = 15;
 
     @Builder.Default
     Integer volatilityPeriod = 30;
