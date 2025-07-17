@@ -25,5 +25,5 @@ public class BulkUpdateMarketDataRequest {
     String batchId;
 
     @NotNull
-    LocalDateTime processing;
+    LocalDateTime processingTimestamp;
 }
