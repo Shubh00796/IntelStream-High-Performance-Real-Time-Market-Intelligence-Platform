@@ -1,11 +1,11 @@
 package com.IntelStream.presentation.dto.request;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Value
@@ -27,7 +27,7 @@ public class GenerateAnalyticsRequest {
     Integer movingAveragePeriod50 = 50;
 
     @Builder.Default
-    Integer rsiPeriod = 15;
+    Integer rsiPeriod = 14;
 
     @Builder.Default
     Integer volatilityPeriod = 30;
