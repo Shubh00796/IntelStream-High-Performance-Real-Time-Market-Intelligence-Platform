@@ -1,4 +1,4 @@
-package com.IntelStream.application.command.handler.command_mapper;
+package com.IntelStream.application.command.command_mapper;
 
 import com.IntelStream.application.command.dto.CreateInstrumentCommand;
 import com.IntelStream.domain.model.Instrument;

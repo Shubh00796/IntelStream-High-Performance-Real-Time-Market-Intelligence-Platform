@@ -1,7 +1,7 @@
 package com.IntelStream.application.command.handler;
 
 import com.IntelStream.application.command.dto.CreateInstrumentCommand;
-import com.IntelStream.application.command.handler.command_mapper.InstrumentCommandMapper;
+import com.IntelStream.application.command.command_mapper.InstrumentCommandMapper;
 import com.IntelStream.application.common.exception.DuplicateInstrumentException;
 import com.IntelStream.application.common.exception.InstrumentNotFoundException;
 import com.IntelStream.application.port.out.EventPublisher;
