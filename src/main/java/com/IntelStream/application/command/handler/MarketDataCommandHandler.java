@@ -1,13 +1,13 @@
 package com.IntelStream.application.command.handler;
 
+import com.IntelStream.application.command.command_mapper.MarketDataCommandMapper;
 import com.IntelStream.application.command.dto.BulkUpdateMarketDataCommand;
 import com.IntelStream.application.command.dto.UpdateMarketDataCommand;
-import com.IntelStream.application.command.command_mapper.MarketDataCommandMapper;
 import com.IntelStream.application.common.exception.ResourceNotFoundException;
 import com.IntelStream.domain.event.evenet_emmiters.MarketDataEventEmitter;
 import com.IntelStream.domain.model.MarketData;
 import com.IntelStream.domain.repository.InstrumentRepository;
-import com.IntelStream.domain.repository.MarketDataRepository;
+import com.IntelStream.infrastructure.persistence.repository.impl.MarketDataRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class MarketDataCommandHandler {
 
-    private final MarketDataRepository marketDataRepository;
+    private final MarketDataRepositoryImpl marketDataRepository;
     private final InstrumentRepository instrumentRepository;
     private final MarketDataCommandMapper marketDataMapper;
     private final MarketDataEventEmitter eventEmitter;

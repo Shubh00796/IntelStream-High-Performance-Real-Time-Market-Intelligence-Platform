@@ -9,6 +9,7 @@ import com.IntelStream.domain.event.InstrumentCreatedEvent;
 import com.IntelStream.domain.event.InstrumentDeactivatedEvent;
 import com.IntelStream.domain.model.Instrument;
 import com.IntelStream.domain.repository.InstrumentRepository;
+import com.IntelStream.infrastructure.persistence.repository.impl.InstrumentRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ import java.time.LocalDateTime;
 @Slf4j
 public class InstrumentCommandHandler {
 
-    private final InstrumentRepository instrumentRepository;
+    private final InstrumentRepositoryImpl instrumentRepository;
     private final InstrumentCommandMapper instrumentMapper;
     private final EventPublisher eventPublisher;
 
