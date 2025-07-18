@@ -1,4 +1,4 @@
-package com.IntelStream.application.query.handler;
+package com.IntelStream.application.query.handler.marketdata;
 
 
 import com.IntelStream.domain.repository.MarketDataRepository;
@@ -7,16 +7,19 @@ import com.IntelStream.presentation.dto.response.MarketDataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+// 3. Get Latest Tick for multiple instruments
 @Component
 @RequiredArgsConstructor
-public class GetMarketDataByIdQueryHandler {
-
+public class GetLatestMarketDataQueryHandler {
     private final MarketDataRepository marketDataRepository;
     private final MarketDataMapper marketDataMapper;
 
-    public MarketDataResponse handle(Long id) {
-        return marketDataRepository.findById(id)
+    public List<MarketDataResponse> handle(List<Long> instrumentIds) {
+        return marketDataRepository.findLatestByInstrumentIds(instrumentIds)
+                .stream()
                 .map(marketDataMapper::toResponse)
-                .orElseThrow(() -> new IllegalArgumentException("MarketData not found for ID: " + id));
+                .toList();
     }
 }

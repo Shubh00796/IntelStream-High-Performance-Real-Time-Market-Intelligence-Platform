@@ -1,4 +1,4 @@
-package com.IntelStream.application.query.handler;
+package com.IntelStream.application.query.handler.marketdata;
 
 import com.IntelStream.application.query.dto.MarketDataQuery;
 import com.IntelStream.domain.model.MarketData;

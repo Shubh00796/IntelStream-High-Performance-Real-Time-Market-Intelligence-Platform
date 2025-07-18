@@ -1,6 +1,7 @@
 package com.IntelStream.infrastructure.persistence.mapper;
 
 
+import com.IntelStream.application.query.dto.TopMoversQuery;
 import com.IntelStream.domain.model.MarketData;
 import com.IntelStream.infrastructure.persistence.entity.MarketDataEntity;
 import com.IntelStream.presentation.dto.response.MarketDataResponse;
@@ -21,6 +22,8 @@ public interface MarketDataMapper {
             @Mapping(target = "spread", source = ".", qualifiedByName = "calculateSpread")
     })
     MarketDataResponse toResponse(MarketData marketData);
+    TopMoversQuery moversToResponce(MarketData marketData);
+
 
     @Named("calculateSpread")
     default BigDecimal calculateSpread(MarketData data) {
