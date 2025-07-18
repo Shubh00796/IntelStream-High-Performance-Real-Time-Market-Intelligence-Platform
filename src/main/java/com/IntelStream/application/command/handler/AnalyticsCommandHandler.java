@@ -7,8 +7,6 @@ import com.IntelStream.domain.model.MarketData;
 import com.IntelStream.domain.repository.AnalyticsRepository;
 import com.IntelStream.domain.repository.MarketDataRepository;
 import com.IntelStream.domain.service.analytics.MarketAnalyticsService;
-import com.IntelStream.infrastructure.persistence.repository.impl.AnalyticsRepositoryImpl;
-import com.IntelStream.infrastructure.persistence.repository.impl.MarketDataRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
