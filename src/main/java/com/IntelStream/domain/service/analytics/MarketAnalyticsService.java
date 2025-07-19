@@ -37,6 +37,10 @@ public class MarketAnalyticsService {
     }
 
     private static void validateHistroricalData(List<MarketData> historicalData) {
+        validateHistoricalData(historicalData);
+    }
+
+    private static void validateHistoricalData(List<MarketData> historicalData) {
         if (historicalData == null || historicalData.isEmpty()) {
             throw new IllegalStateException("Cannot calculate analytics with empty market data.");
         }
