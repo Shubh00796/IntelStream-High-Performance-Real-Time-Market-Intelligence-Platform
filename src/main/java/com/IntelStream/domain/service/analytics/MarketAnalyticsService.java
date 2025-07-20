@@ -1,5 +1,6 @@
 package com.IntelStream.domain.service.analytics;
 
+import com.IntelStream.application.common.exception.ResourceNotFoundException;
 import com.IntelStream.domain.model.AnalyticsSnapshot;
 import com.IntelStream.domain.model.MarketData;
 import com.IntelStream.domain.service.analytics.calculator.RSIIndicatorCalculator;
@@ -42,7 +43,7 @@ public class MarketAnalyticsService {
 
     private static void validateHistoricalData(List<MarketData> historicalData) {
         if (historicalData == null || historicalData.isEmpty()) {
-            throw new IllegalStateException("Cannot calculate analytics with empty market data.");
+            throw new ResourceNotFoundException("Cannot calculate analytics with empty market data.");
         }
     }
 
