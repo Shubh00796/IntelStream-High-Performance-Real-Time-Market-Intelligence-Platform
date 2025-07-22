@@ -2,7 +2,10 @@ package com.IntelStream.application.query.service.analytics;
 
 import com.IntelStream.application.query.dto.AnalyticsQuery;
 import com.IntelStream.domain.model.AnalyticsSnapshot;
+import com.IntelStream.domain.model.MarketData;
 import com.IntelStream.domain.repository.AnalyticsRepository;
+import com.IntelStream.domain.repository.MarketDataRepository;
+import com.IntelStream.domain.service.analytics.MarketAnalyticsService;
 import com.IntelStream.infrastructure.persistence.mapper.AnalyticsSnapshotMapper;
 import com.IntelStream.presentation.dto.response.AnalyticsResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,8 @@ public class AnalyticsQueryService {
 
     private final AnalyticsRepository repo;
     private final AnalyticsSnapshotMapper mapper;
+    private final MarketDataRepository marketDataRepository;
+    private final MarketAnalyticsService marketAnalyticsService;
 
     public AnalyticsResponse getById(Long id) {
         return mapOrThrow(repo.findById(id), "AnalyticsSnapshot not found with ID: " + id);
@@ -64,4 +69,14 @@ public class AnalyticsQueryService {
     private List<AnalyticsResponse> mapAll(List<AnalyticsSnapshot> snapshots) {
         return snapshots.stream().map(mapper::toResponce).toList();
     }
+
+
+    public AnalyticsResponse calculateRealTimeAnalytics(Long instrumentId) {
+        List<MarketData> historicalData = marketDataRepository.findRecentData(instrumentId); // adapter/port
+        LocalDateTime now = LocalDateTime.now();
+
+        AnalyticsSnapshot snapshot = marketAnalyticsService.calculateAnalytics(instrumentId, historicalData, now);
+        return mapper.toResponce(snapshot);
+    }
+
 }

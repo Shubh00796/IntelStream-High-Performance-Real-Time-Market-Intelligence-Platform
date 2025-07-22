@@ -32,4 +32,8 @@ public interface MarketDataRepository {
     void deleteOldData(LocalDateTime cutoffDate);
 
     int bulkInsert(List<MarketData> marketDataList);
+
+
+    List<MarketData> findRecentData(Long instrumentId);
+
 }
