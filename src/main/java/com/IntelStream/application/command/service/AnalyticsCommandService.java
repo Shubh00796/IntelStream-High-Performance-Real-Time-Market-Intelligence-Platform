@@ -2,7 +2,6 @@ package com.IntelStream.application.command.service;
 
 
 import com.IntelStream.application.command.dto.GenerateAnalyticsCommand;
-import com.IntelStream.application.common.exception.ResourceNotFoundException;
 import com.IntelStream.domain.event.evenet_emmiters.AnalyticsEventEmitter;
 import com.IntelStream.domain.model.AnalyticsSnapshot;
 import com.IntelStream.domain.model.MarketData;
@@ -17,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ public class AnalyticsCommandService {
     private final AnalyticsEventEmitter analyticsEventEmitter;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public Long generateAnalytics(GenerateAnalyticsCommand command) {
+    public Optional<AnalyticsSnapshot> generateAnalytics(GenerateAnalyticsCommand command) {
         log.info("Generating analytics for instrument ID: {}", command.getInstrumentId());
 
         LocalDateTime start = command.getCalculatedAt().minusDays(60);
@@ -41,7 +41,7 @@ public class AnalyticsCommandService {
 
         if (historical.isEmpty()) {
             log.warn("No historical data found for instrument ID: {}", command.getInstrumentId());
-            throw new ResourceNotFoundException("No historical market data available for instrument ID: " + command.getInstrumentId());
+            return Optional.empty(); // No snapshot generated
         }
 
         AnalyticsSnapshot snapshot = analyticsService.calculateAnalytics(
@@ -54,6 +54,8 @@ public class AnalyticsCommandService {
         analyticsEventEmitter.emitGenerated(saved);
 
         log.info("Analytics snapshot saved with ID: {}", saved.getId());
-        return saved.getId();
+        return Optional.of(saved);
     }
+
+
 }

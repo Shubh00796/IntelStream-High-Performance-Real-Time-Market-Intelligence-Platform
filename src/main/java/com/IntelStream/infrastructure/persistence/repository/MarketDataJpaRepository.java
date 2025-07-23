@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 @Repository
 public interface MarketDataJpaRepository extends JpaRepository<MarketDataEntity, Long> {
+    List<MarketDataEntity> findTop10ByInstrumentIdOrderByTimestampDesc(Long instrumentId);
 
     @Query(value = """
             SELECT DISTINCT ON (instrument_id) *

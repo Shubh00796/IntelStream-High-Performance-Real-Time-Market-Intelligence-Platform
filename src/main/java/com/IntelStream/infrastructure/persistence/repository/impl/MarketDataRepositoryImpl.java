@@ -52,12 +52,6 @@ public class MarketDataRepositoryImpl implements MarketDataRepository {
         return streamAndMap(() -> jpaRepository.findLatestByInstrumentIds(instrumentIds));
     }
 
-    @Override
-    public Stream<MarketData> findByInstrumentIdAndTimestampBetween(
-            Long instrumentId, LocalDateTime start, LocalDateTime end) {
-        return jpaRepository.findByInstrumentIdAndTimestampBetween(instrumentId, start, end)
-                .map(mapper::toDomain);
-    }
 
     @Override
     public List<MarketData> findTopPriceMovements(int limit, LocalDateTime since) {
@@ -107,4 +101,36 @@ public class MarketDataRepositoryImpl implements MarketDataRepository {
                 .map(obj -> mapper.toDomain((MarketDataEntity) obj))
                 .toList();
     }
+
+    @Override
+    public List<MarketData> findRecentData(Long instrumentId) {
+        // Example: Fetch the 10 most recent records for the instrumentId.
+        List<MarketDataEntity> entities = jpaRepository.findTop10ByInstrumentIdOrderByTimestampDesc(instrumentId);
+        return entities.stream().map(mapper::toDomain).toList();
+    }
+
+
+    @Override
+    public Stream<MarketData> findByInstrumentIdAndTimestampBetween(Long instrumentId, LocalDateTime start, LocalDateTime end) {
+        return jpaRepository.findByInstrumentIdAndTimestampBetween(instrumentId, start, end)
+                .map(this::toDomain);
+    }
+
+    // Map JPA entity to domain model
+    private MarketData toDomain(MarketDataEntity entity) {
+        return MarketData.builder()
+                .id(entity.getId())
+                .instrumentId(entity.getInstrumentId())
+                .timestamp(entity.getTimestamp())
+                .price(entity.getPrice())
+                .volume(entity.getVolume())
+                .bidPrice(entity.getBidPrice())
+                .askPrice(entity.getAskPrice())
+                .exchangeId(entity.getExchangeId())
+                .source(entity.getSource())
+                .build();
+    }
+
 }
+
+

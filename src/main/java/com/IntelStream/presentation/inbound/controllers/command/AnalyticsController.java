@@ -20,6 +20,13 @@ public class AnalyticsController {
     @PostMapping("/generate")
     public ResponseEntity<ApiResponse<Long>> generateAnalytics(@RequestBody GenerateAnalyticsCommand command) {
         Long id = analyticsCommandHandler.handle(command);
+
+        if (id == null) {
+            return ResponseEntity
+                    .status(204) // No Content
+                    .body(ApiResponse.ok(null)); // or use ApiResponse.error(...) if you prefer
+        }
+
         return ResponseEntity.ok(ApiResponse.ok(id));
     }
 }

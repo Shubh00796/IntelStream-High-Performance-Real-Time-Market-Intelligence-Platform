@@ -83,10 +83,11 @@ public class MarketAnalyticsService {
             rsi -> rsi.compareTo(BigDecimal.valueOf(70)) < 0;
 
     public void validateHistoricalData(List<MarketData> historicalData) {
-        if (isEmptyData.test(historicalData)) {
+        if (historicalData == null || historicalData.isEmpty()) {
             throw new ResourceNotFoundException("Cannot calculate analytics with empty market data.");
         }
     }
+
 
     public String determineTrend(BigDecimal ma20, BigDecimal ma50) {
         if (isBullish.test(ma20, ma50)) return "BULLISH";
