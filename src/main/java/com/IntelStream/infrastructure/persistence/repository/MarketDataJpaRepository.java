@@ -19,13 +19,19 @@ import java.util.stream.Stream;
 public interface MarketDataJpaRepository extends JpaRepository<MarketDataEntity, Long> {
     List<MarketDataEntity> findTop10ByInstrumentIdOrderByTimestampDesc(Long instrumentId);
 
+
     @Query(value = """
-            SELECT DISTINCT ON (instrument_id) *
-            FROM market_data
-            WHERE instrument_id IN ::instrumentIds
-            ORDER BY instrument_id , timestamp DESC
-            """, nativeQuery = true)
+    SELECT md.*
+    FROM market_data md
+    INNER JOIN (
+        SELECT instrument_id, MAX(timestamp) AS max_timestamp
+        FROM market_data
+        WHERE instrument_id IN (:instrumentIds)
+        GROUP BY instrument_id
+    ) latest ON md.instrument_id = latest.instrument_id AND md.timestamp = latest.max_timestamp
+    """, nativeQuery = true)
     List<MarketDataEntity> findLatestByInstrumentIds(@Param("instrumentIds") List<Long> instrumentIds);
+
 
 
     @Query(""" 
