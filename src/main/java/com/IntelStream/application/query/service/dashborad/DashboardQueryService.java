@@ -42,12 +42,16 @@ public class DashboardQueryService {
         Map<Long, List<MarketData>> priceHistories = query.getIncludePriceHistory()
                 ? fetchPriceHistories(instrumentIds, query.getAsOf(), query.getPriceHistoryHours())
                 : Collections.emptyMap();
+        validateMarketData result = new validateMarketData(latestPrices, analyticsSnapshots, priceHistories);
 
         List<InstrumentDashboardData> dashboardData = buildDashboardData(
-                instruments, latestPrices, analyticsSnapshots, priceHistories
+                instruments, result.latestPrices(), result.analyticsSnapshots(), result.priceHistories()
         );
 
         return buildDashboardResponse(query.getAsOf(), dashboardData);
+    }
+
+    private record validateMarketData(Map<Long, MarketData> latestPrices, Map<Long, AnalyticsSnapshot> analyticsSnapshots, Map<Long, List<MarketData>> priceHistories) {
     }
 
     /**
