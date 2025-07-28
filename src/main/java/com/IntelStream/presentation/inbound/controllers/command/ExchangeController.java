@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/api/exchanges")
 @RequiredArgsConstructor
@@ -25,4 +27,12 @@ public class ExchangeController {
         exchangeCommandHandler.handleDeactivate(id);
         return ResponseEntity.ok(ApiResponse.ok(null));
     }
+
+    @PostMapping("/can-trade")
+    public ResponseEntity<ApiResponse<Boolean>> canTrade(@RequestBody Exchange exchange) {
+        boolean tradable = exchangeCommandHandler.canTrade(exchange, LocalDateTime.now());
+        return ResponseEntity.ok(ApiResponse.ok(tradable));
+    }
+
+
 }
