@@ -3,6 +3,7 @@ package com.IntelStream.domain.model;
 
 import lombok.Value;
 import lombok.Builder;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 public class MarketData {
     Long id;
     Long instrumentId;
+    String instrumentSymbol;
     Long exchangeId;
     BigDecimal price;
     BigDecimal volume;
