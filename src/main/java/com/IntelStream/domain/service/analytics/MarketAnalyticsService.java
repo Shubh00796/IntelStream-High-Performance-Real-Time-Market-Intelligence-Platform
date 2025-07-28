@@ -1,6 +1,7 @@
 package com.IntelStream.domain.service.analytics;
 
 import com.IntelStream.application.common.exception.ResourceNotFoundException;
+import com.IntelStream.application.strategy.SignalStrategy;
 import com.IntelStream.domain.model.AnalyticsSnapshot;
 import com.IntelStream.domain.model.MarketData;
 import com.IntelStream.domain.service.analytics.calculator.*;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -25,6 +27,7 @@ public class MarketAnalyticsService {
     private final PriceChangeCalculator priceChangeCalculator;
     private final PriceChangePercentCalculator priceChangePercentCalculator;
     private final Volume24hCalculator volume24hCalculator;
+    private final Map<String, SignalStrategy> strategies;
 
     public AnalyticsSnapshot calculateAnalytics(
             Long instrumentId,
@@ -96,10 +99,7 @@ public class MarketAnalyticsService {
     }
 
     public String determineSignal(BigDecimal rsi, String trend) {
-        return switch (trend) {
-            case "BULLISH" -> isRsiAbove30.test(rsi) ? "BUY" : "HOLD";
-            case "BEARISH" -> isRsiBelow70.test(rsi) ? "SELL" : "HOLD";
-            default -> "HOLD";
-        };
+        SignalStrategy strategy = strategies.getOrDefault(trend.toLowerCase(), strategies.get("neutral"));
+        return strategy.generateSignal(rsi);
     }
 }
