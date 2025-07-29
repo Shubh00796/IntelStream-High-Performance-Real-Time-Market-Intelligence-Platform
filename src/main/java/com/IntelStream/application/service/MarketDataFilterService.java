@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,10 +17,16 @@ public class MarketDataFilterService {
     private final Map<String, MarketDataFilterStrategy> strategies;
 
     public List<MarketData> applyFilter(String strategyKey, List<MarketData> data) {
-        MarketDataFilterStrategy strategy = strategies.get(strategyKey);
-        if (strategy == null) {
-            throw new ResourceNotFoundException("Invalid filter strategy: " + strategyKey);
-        }
-        return strategy.filter(data);
+        return getStrategy(strategyKey)
+                .map(strategy -> strategy.filter(data))
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid filter strategy: " + strategyKey));
+    }
+
+    private Optional<MarketDataFilterStrategy> getStrategy(String key) {
+        return Optional.ofNullable(strategies.get(normalizeKey(key)));
+    }
+
+    private String normalizeKey(String key) {
+        return key == null ? "" : key.trim().toLowerCase();
     }
 }
