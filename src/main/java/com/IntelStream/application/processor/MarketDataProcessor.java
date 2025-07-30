@@ -75,5 +75,31 @@ public class MarketDataProcessor {
                 .collect(Collectors.toList());
     }
 
+    // 5. Get instruments with price above a certain threshold
+    public List<MarketData> getInstrumentAbovePriceThreshold(BigDecimal priceThreshold) {
+        return marketDataList.stream()
+                .filter(marketData -> marketData.getPrice().compareTo(priceThreshold) > 0)
+                .collect(Collectors.toList());
+    }
+
+    // 6. Get instruments with volume above a certain threshold
+    public List<MarketData> getInstrumentAboveVolumeThreshold(BigDecimal priceThreshold) {
+        return marketDataList.stream()
+                .filter(marketData -> marketData.getVolume().compareTo(priceThreshold) > 0)
+                .collect(Collectors.toList());
+    }
+
+
+    // 7. Detect significant price changes
+    public List<MarketData> detectSignificantMovements(BigDecimal threshold, Map<Long, BigDecimal> previousPrices) {
+        return marketDataList.stream()
+                .filter(marketData -> {
+                    BigDecimal previousPrice = previousPrices.get(marketData.getInstrumentId());
+                    return previousPrice != null && marketData.getPrice().subtract(previousPrice).abs().compareTo(threshold) > 0;
+                })
+                .collect(Collectors.toList());
+
+    }
+
 
 }
