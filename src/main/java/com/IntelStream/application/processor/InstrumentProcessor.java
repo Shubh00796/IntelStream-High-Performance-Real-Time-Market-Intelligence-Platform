@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -97,4 +99,75 @@ public class InstrumentProcessor {
                 .stream()
                 .collect(Collectors.groupingBy(instrument -> instrument.getExchangeId() + "_" + instrument.isActive()));
     }
+
+    //12. Map InstrumentId to Symbol
+    public Map<Long, String> mapInstrumentIdToSymbol() {
+        return instruments
+                .stream()
+                .collect(Collectors.toMap(Instrument::getId, Instrument::getSymbol));
+    }
+
+    //13 Map Symbol to ExchangeId
+    public Map<String, Long> mapSymbolToExchangeId() {
+        return instruments
+                .stream()
+                .collect(Collectors.toMap(Instrument::getSymbol, Instrument::getExchangeId));
+    }
+
+    //14. Get All Unique Sectors
+    public Set<String> getAllUniqueSectors() {
+        return instruments
+                .stream()
+                .map(Instrument::getSector)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+    }
+
+    //15. Get All Unique Isntrument names
+    public Set<String> getAllUniqueInstrumentsNames() {
+        return instruments
+                .stream()
+                .map(Instrument::getName)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+    }
+
+    //16. Map Instrument Symbol To ActiveStatus
+    public Map<String, Boolean> mapInstrumentSymbolToActiveStatus() {
+        return instruments
+                .stream()
+                .collect(Collectors.toMap(Instrument::getSymbol, Instrument::isActive));
+    }
+
+    //17. Count Active Instruments
+    public long countActiveInstruments() {
+        return instruments.stream()
+                .filter(Instrument::isActive)
+                .count();
+    }
+
+    //18. Count By InstrumentType
+    public long countByInstrumentType(String type) {
+        return instruments
+                .stream()
+                .filter(instrument -> instrument.getInstrumentType().equalsIgnoreCase(type))
+                .count();
+    }
+
+    //19. Count By Sector
+    public long countBySector(String sector) {
+        return instruments
+                .stream()
+                .filter(instrument -> instrument.getSector().equalsIgnoreCase(sector))
+                .count();
+    }
+
+    //20. Count By Currency
+    public long countByCurrency(String currency) {
+        return instruments
+                .stream()
+                .filter(instrument -> instrument.getCurrency().equalsIgnoreCase(currency))
+                .count();
+    }
+
 }
