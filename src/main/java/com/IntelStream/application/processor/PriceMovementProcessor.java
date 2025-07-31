@@ -1,6 +1,5 @@
 package com.IntelStream.application.processor;
 
-import com.IntelStream.domain.model.MarketData;
 import com.IntelStream.domain.model.PriceMovement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -9,7 +8,6 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -32,5 +30,28 @@ public class PriceMovementProcessor {
                 .sorted(Comparator.comparing(PriceMovement::getChangePercent).reversed())
                 .collect(Collectors.toList());
     }
+
+    // 3. Group by InstrumentId
+    public Map<Long, List<PriceMovement>> groupByInstrumentId() {
+        return priceMovements.stream()
+                .collect(Collectors.groupingBy(PriceMovement::getInstrumentId));
+    }
+
+    //4. Group by InstrumentId and CurrentPrice
+    public Map<Long, Map<BigDecimal, List<PriceMovement>>> groupByInstrumentIdAndCurrentPrice() {
+        return priceMovements.stream()
+                .collect(Collectors.groupingBy(PriceMovement::getInstrumentId,
+                        Collectors.groupingBy(PriceMovement::getCurrentPrice))
+                );
+    }
+
+    //5. Filter by InstrumentId And CurrentPrice
+    public List<PriceMovement> filterByInstrumentIdAndCurrentPrice(Long instrumentId, BigDecimal currentPrice) {
+        return priceMovements.stream()
+                .filter(priceMovement -> priceMovement.getInstrumentId().equals(instrumentId) &&
+                        priceMovement.getCurrentPrice().compareTo(currentPrice) == 0)
+                .collect(Collectors.toList());
+    }
+
 
 }
