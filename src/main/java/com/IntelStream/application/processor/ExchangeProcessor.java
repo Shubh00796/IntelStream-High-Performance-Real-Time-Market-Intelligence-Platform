@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -61,6 +62,42 @@ public class ExchangeProcessor {
                 .stream()
                 .filter(exchange -> exchange.getMarketOpen().isAfter(time))
                 .collect(Collectors.toList());
+    }
+
+
+    //6. Group By Currency
+    public Map<String, List<Exchange>> groupByCurrency() {
+        return exchanges
+                .stream()
+                .collect(Collectors.groupingBy(Exchange::getCurrency));
+    }
+
+    //7. Group By Active Status
+    public Map<Boolean, List<Exchange>> groupByActiveStatus() {
+        return exchanges
+                .stream()
+                .collect(Collectors.groupingBy(Exchange::isActive));
+    }
+
+    //8. Group By Exchange Name
+    public Map<String, List<Exchange>> groupByExchangeNames() {
+        return exchanges
+                .stream()
+                .collect(Collectors.groupingBy(Exchange::getName));
+    }
+
+    //9. Group By Market Open Date
+    public Map<LocalDateTime, List<Exchange>> groupByMarketOpenDate() {
+        return exchanges
+                .stream()
+                .collect(Collectors.groupingBy(Exchange::getMarketOpen));
+    }
+
+    //6. Map ExchangeId to Code
+    public Map<Long, String> getExchangeIdToCodeMap() {
+        return exchanges
+                .stream()
+                .collect(Collectors.toMap(Exchange::getId, Exchange::getCode));
     }
 
 
