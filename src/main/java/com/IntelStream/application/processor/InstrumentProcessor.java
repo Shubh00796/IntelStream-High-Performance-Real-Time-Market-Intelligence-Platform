@@ -45,4 +45,27 @@ public class InstrumentProcessor {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    //5. Filter By Selector
+    public List<Instrument> filterBySelector(String selector) {
+        return instruments
+                .stream()
+                .filter(instrument -> instrument.getSector().equalsIgnoreCase(selector))
+                .toList();
+    }
+
+    //6. Filter by ExchangeId And Symbol
+    public List<Instrument> filterByExchangeIdAndSymbol(Long exchangeId, String symbol) {
+        return instruments
+                .stream()
+                .filter(instrument -> instrument.getExchangeId().equals(exchangeId) && instrument.getSymbol().equalsIgnoreCase(symbol))
+                .toList();
+    }
+
+    //7. Filter by ExchnageID and Currency
+    public List<Instrument> filterByExchangeIdandCurrency(Long exchangeId, String currency) {
+        return instruments
+                .stream()
+                .filter(instrument -> instrument.getExchangeId().equals(exchangeId) && instrument.getCurrency().equalsIgnoreCase(currency))
+                .toList();
+    }
 }
