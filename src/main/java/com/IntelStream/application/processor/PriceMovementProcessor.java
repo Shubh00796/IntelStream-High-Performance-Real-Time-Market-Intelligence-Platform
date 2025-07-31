@@ -53,5 +53,15 @@ public class PriceMovementProcessor {
                 .collect(Collectors.toList());
     }
 
+    //6. Get Average Change Percentage by InstrumentId
+    public Map<Long, BigDecimal> getAverageChangePercentageByInstrumentId() {
+        return priceMovements.stream()
+                .collect(Collectors.groupingBy(PriceMovement::getInstrumentId,
+                        Collectors.averagingDouble(pm -> pm.getChangePercent().doubleValue())))
+                .entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        entry -> BigDecimal.valueOf(entry.getValue())));
+    }
+
 
 }
