@@ -170,4 +170,29 @@ public class InstrumentProcessor {
                 .count();
     }
 
+    //21 Get Earliest Created Instrument
+    public Instrument getEarliestCreatedInstrument() {
+        return instruments
+                .stream()
+                .min(((o1, o2) -> o1.getCreatedAt().compareTo(o2.getCreatedAt())))
+                .orElse(null);
+    }
+
+    //22 Get Latest Created Instrument
+    public Instrument getLatestCreatedInstrument() {
+        return instruments
+                .stream()
+                .max((i1, i2) -> i1.getCreatedAt().compareTo(i2.getCreatedAt()))
+                .orElse(null);
+    }
+    //23 Get Latest Created Instrument per Type
+public Map<String, Instrument> getLatestCreatedInstrumentPerType() {
+        return instruments
+                .stream()
+                .collect(Collectors.groupingBy(Instrument::getInstrumentType,
+                        Collectors.maxBy((i1, i2) -> i1.getCreatedAt().compareTo(i2.getCreatedAt()))))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().orElse(null)));
+    }
 }
