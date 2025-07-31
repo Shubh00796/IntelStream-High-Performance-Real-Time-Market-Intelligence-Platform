@@ -148,5 +148,13 @@ public class ExchangeProcessor {
                 .count();
     }
 
+    //13. Count Exchanges by Currency
+    public long countExchangeByCurrency(String currency) {
+        return exchanges
+                .stream()
+                .filter(exchange -> exchange.getCurrency().equalsIgnoreCase(currency))
+                .count();
+    }
+
 
 }
