@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -67,5 +68,33 @@ public class InstrumentProcessor {
                 .stream()
                 .filter(instrument -> instrument.getExchangeId().equals(exchangeId) && instrument.getCurrency().equalsIgnoreCase(currency))
                 .toList();
+    }
+
+    //8. Gropup by InstrumentType
+    public Map<String, List<Instrument>> groupByInstrumentType() {
+        return instruments
+                .stream()
+                .collect(Collectors.groupingBy(Instrument::getInstrumentType));
+    }
+
+    //9. Group by Sector
+    public Map<String, List<Instrument>> groupBySector() {
+        return instruments
+                .stream()
+                .collect(Collectors.groupingBy(instrument -> instrument.getSector()));
+    }
+
+    //10. Group by ExchangeId and Currency
+    public Map<String, List<Instrument>> groupByExchangeIdAndCurrency() {
+        return instruments
+                .stream()
+                .collect(Collectors.groupingBy(instrument -> instrument.getExchangeId() + "-" + instrument.getCurrency()));
+    }
+
+    //11. Group by ExchangeId and Active Status
+    public Map<String, List<Instrument>> groupByExchangeIdAndActiveStatus() {
+        return instruments
+                .stream()
+                .collect(Collectors.groupingBy(instrument -> instrument.getExchangeId() + "_" + instrument.isActive()));
     }
 }
