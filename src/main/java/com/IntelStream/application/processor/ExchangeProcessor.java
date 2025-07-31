@@ -5,11 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Component
@@ -18,143 +16,103 @@ public class ExchangeProcessor {
 
     private final List<Exchange> exchanges;
 
-    // 1. Filter by Active Exchanges
-    public List<Exchange> filterByActiveExchnages() {
-        return exchanges
-                .stream()
-                .filter(Exchange::isActive)
-                .collect(Collectors.toList());
-    }
-
-    //2. Filter by Inactive Exchanges
-    public List<Exchange> filterByInactiveExchanges() {
-        return exchanges
-                .stream()
-                .filter(exchange -> !exchange.isActive())
-                .collect(Collectors.toList());
-    }
-
-    //3. Filter by Currency
-    public List<Exchange> filterByCurrency(String currency) {
-        return exchanges
-                .stream()
-                .filter(exchange -> exchange.getCurrency().equalsIgnoreCase(currency))
-                .collect(Collectors.toList());
-    }
-
-    //4. Filter by Exchange Name
-    public List<Exchange> filterByExchnageName(String name) {
-        return exchanges
-                .stream()
-                .filter(exchange -> exchange.getName().equalsIgnoreCase(name))
-                .collect(Collectors.toList());
-    }
-
-    //5. Filter By MarketOpenBefore
-    public List<Exchange> filterByMarketOpenBefore(LocalDateTime time) {
-        return exchanges
-                .stream()
-                .filter(exchange -> exchange.getMarketOpen().isBefore(time))
-                .collect(Collectors.toList());
-
-    }
-
-    //5. Filter By MarketOpenAfter
-    public List<Exchange> filterByMarketOpenAfter(LocalDateTime time) {
-        return exchanges
-                .stream()
-                .filter(exchange -> exchange.getMarketOpen().isAfter(time))
-                .collect(Collectors.toList());
-    }
-
-
-    //6. Group By Currency
-    public Map<String, List<Exchange>> groupByCurrency() {
-        return exchanges
-                .stream()
-                .collect(Collectors.groupingBy(Exchange::getCurrency));
-    }
-
-    //7. Group By Active Status
-    public Map<Boolean, List<Exchange>> groupByActiveStatus() {
-        return exchanges
-                .stream()
-                .collect(Collectors.groupingBy(Exchange::isActive));
-    }
-
-    //8. Group By Exchange Name
-    public Map<String, List<Exchange>> groupByExchangeNames() {
-        return exchanges
-                .stream()
-                .collect(Collectors.groupingBy(Exchange::getName));
-    }
-
-    //9. Group By Market Open Date
-    public Map<LocalDateTime, List<Exchange>> groupByMarketOpenDate() {
-        return exchanges
-                .stream()
-                .collect(Collectors.groupingBy(Exchange::getMarketOpen));
-    }
-
-    //6. Map ExchangeId to Code
-    public Map<Long, String> getExchangeIdToCodeMap() {
-        return exchanges
-                .stream()
-                .collect(Collectors.toMap(Exchange::getId, Exchange::getCode));
-    }
-
-    //7. Map ExchangeId to Name
-    public Map<Long, String> getExchangeIdtoNameMap() {
-        return exchanges
-                .stream()
-                .collect(Collectors.toMap(Exchange::getId, Exchange::getName));
-    }
-
-    //8. Map ExchnageCode to full Exchange Object
-    public Map<String, Exchange> getExchangeCodetoExchangeMap() {
+    // Generic filter method
+    private List<Exchange> filter(Predicate<Exchange> predicate) {
         return exchanges.stream()
-                .collect(Collectors.toMap(
-                        Exchange::getCode,
-                        Function.identity(
-                        )));
+                .filter(predicate)
+                .collect(Collectors.toList());
     }
 
-    //9. Map ExchangeName to full Exchange Object
-    public Map<String, Exchange> getExchangeNametoExchnageMap() {
-        return exchanges
-                .stream()
-                .collect(Collectors.toMap(Exchange::getName,
-                        Function.identity()));
+    // Generic groupBy method
+    private <K> Map<K, List<Exchange>> groupBy(Function<Exchange, K> classifier) {
+        return exchanges.stream()
+                .collect(Collectors.groupingBy(classifier));
     }
 
-    //10. Get Earliest Market Open Exchange
+    // Generic map method
+    private <K, V> Map<K, V> toMap(Function<Exchange, K> keyMapper, Function<Exchange, V> valueMapper) {
+        return exchanges.stream()
+                .collect(Collectors.toMap(keyMapper, valueMapper));
+    }
+
+    // Filters
+    public List<Exchange> filterByActiveExchanges() {
+        return filter(Exchange::isActive);
+    }
+
+    public List<Exchange> filterByInactiveExchanges() {
+        return filter(exchange -> !exchange.isActive());
+    }
+
+    public List<Exchange> filterByCurrency(String currency) {
+        return filter(exchange -> exchange.getCurrency().equalsIgnoreCase(currency));
+    }
+
+    public List<Exchange> filterByExchangeName(String name) {
+        return filter(exchange -> exchange.getName().equalsIgnoreCase(name));
+    }
+
+    public List<Exchange> filterByMarketOpenBefore(LocalDateTime time) {
+        return filter(exchange -> exchange.getMarketOpen().isBefore(time));
+    }
+
+    public List<Exchange> filterByMarketOpenAfter(LocalDateTime time) {
+        return filter(exchange -> exchange.getMarketOpen().isAfter(time));
+    }
+
+    // Grouping
+    public Map<String, List<Exchange>> groupByCurrency() {
+        return groupBy(Exchange::getCurrency);
+    }
+
+    public Map<Boolean, List<Exchange>> groupByActiveStatus() {
+        return groupBy(Exchange::isActive);
+    }
+
+    public Map<String, List<Exchange>> groupByExchangeNames() {
+        return groupBy(Exchange::getName);
+    }
+
+    public Map<LocalDateTime, List<Exchange>> groupByMarketOpenDate() {
+        return groupBy(Exchange::getMarketOpen);
+    }
+
+    // Mapping
+    public Map<Long, String> getExchangeIdToCodeMap() {
+        return toMap(Exchange::getId, Exchange::getCode);
+    }
+
+    public Map<Long, String> getExchangeIdToNameMap() {
+        return toMap(Exchange::getId, Exchange::getName);
+    }
+
+    public Map<String, Exchange> getExchangeCodeToExchangeMap() {
+        return toMap(Exchange::getCode, Function.identity());
+    }
+
+    public Map<String, Exchange> getExchangeNameToExchangeMap() {
+        return toMap(Exchange::getName, Function.identity());
+    }
+
+    // Min/Max
     public Optional<Exchange> getEarliestMarketOpenExchange() {
         return exchanges.stream()
                 .min(Comparator.comparing(Exchange::getMarketOpen));
     }
 
-    //11. Get Latest Market Open Exchange
     public Optional<Exchange> getLatestMarketCloseExchange() {
-        return exchanges
-                .stream()
+        return exchanges.stream()
                 .max(Comparator.comparing(Exchange::getMarketOpen));
     }
 
-    //12. Count Exchanges by Active Status
+    // Count
     public long countActiveExchanges() {
-        return exchanges
-                .stream()
-                .filter(Exchange::isActive)
-                .count();
+        return exchanges.stream().filter(Exchange::isActive).count();
     }
 
-    //13. Count Exchanges by Currency
     public long countExchangeByCurrency(String currency) {
-        return exchanges
-                .stream()
+        return exchanges.stream()
                 .filter(exchange -> exchange.getCurrency().equalsIgnoreCase(currency))
                 .count();
     }
-
-
 }
