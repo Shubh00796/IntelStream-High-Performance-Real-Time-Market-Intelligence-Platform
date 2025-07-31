@@ -5,8 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -98,6 +101,59 @@ public class ExchangeProcessor {
         return exchanges
                 .stream()
                 .collect(Collectors.toMap(Exchange::getId, Exchange::getCode));
+    }
+
+    //7. Map ExchangeId to Name
+    public Map<Long, String> getExchangeIdtoNameMap() {
+        return exchanges
+                .stream()
+                .collect(Collectors.toMap(Exchange::getId, Exchange::getName));
+    }
+
+    //8. Map ExchnageCode to full Exchange Object
+    public Map<String, Exchange> getExchangeCodetoExchangeMap() {
+        return exchanges.stream()
+                .collect(Collectors.toMap(
+                        Exchange::getCode,
+                        Function.identity(
+                        )));
+    }
+
+    //9. Map ExchangeName to full Exchange Object
+    public Map<String, Exchange> getExchangeNametoExchnageMap() {
+        return exchanges
+                .stream()
+                .collect(Collectors.toMap(Exchange::getName,
+                        Function.identity()));
+    }
+
+    //10. Get Earliest Market Open Exchange
+    public Optional<Exchange> getEarliestMarketOpenExchange() {
+        return exchanges.stream()
+                .min(Comparator.comparing(Exchange::getMarketOpen));
+    }
+
+    //11. Get Latest Market Open Exchange
+    public Optional<Exchange> getLatestMarketCloseExchange() {
+        return exchanges
+                .stream()
+                .max(Comparator.comparing(Exchange::getMarketOpen));
+    }
+
+    //12. Count Exchanges by Active Status
+    public long countActiveExchanges() {
+        return exchanges
+                .stream()
+                .filter(Exchange::isActive)
+                .count();
+    }
+
+    //13. Count Exchanges by Currency
+    public long countExchangeByCurrency(String currency) {
+        return exchanges
+                .stream()
+                .filter(exchange -> exchange.getCurrency().equalsIgnoreCase(currency))
+                .count();
     }
 
 
