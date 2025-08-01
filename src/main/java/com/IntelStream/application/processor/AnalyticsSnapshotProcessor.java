@@ -63,12 +63,19 @@ public class AnalyticsSnapshotProcessor {
                 .toList();
     }
 
-    //8. Filter by Instrument Id and RsI
+    //8. Filter by InstrumentId and RsI
     public List<AnalyticsSnapshot> filterByInstrumentIdAndRsi(Long instrumentId, BigDecimal rsi) {
         return snapshots
                 .stream()
                 .filter(analyticsSnapshot -> analyticsSnapshot.getInstrumentId().equals(instrumentId) && analyticsSnapshot.getRsi().equals(rsi))
                 .toList();
+    }
+
+    //9. Group by InstrumentId
+    public Map<Long, List<AnalyticsSnapshot>> getSnapshotByInstrumentId() {
+        return snapshots
+                .stream()
+                .collect(Collectors.groupingBy(AnalyticsSnapshot::getInstrumentId));
     }
 
 
