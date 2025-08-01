@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -76,6 +77,86 @@ public class AnalyticsSnapshotProcessor {
         return snapshots
                 .stream()
                 .collect(Collectors.groupingBy(AnalyticsSnapshot::getInstrumentId));
+    }
+
+    //10. Group by RSI Status
+    public Map<String, List<AnalyticsSnapshot>> getSnapshotsRsiStatus() {
+        Map<Predicate<BigDecimal>, String> rsiCategories = new LinkedHashMap<>();
+        rsiCategories.put(rsi -> rsi.compareTo(BigDecimal.valueOf(70)) > 0, "Overbought");
+
+        rsiCategories.put(rsi -> rsi.compareTo(BigDecimal.valueOf(30)) < 0, "Oversold");
+        rsiCategories.put(rsi -> true, "Neutral"); // default case
+
+        return snapshots.stream()
+                .collect(Collectors.groupingBy(snapshot ->
+                        Optional.ofNullable(snapshot.getRsi())
+                                .map(rsi -> rsiCategories.entrySet().stream()
+                                        .filter(entry -> entry.getKey().test(rsi))
+                                        .map(Map.Entry::getValue)
+                                        .findFirst()
+                                        .orElse("Neutral"))
+                                .orElse("Unknown")
+                ));
+    }
+
+    //11. Group by Volatility Levels
+    public Map<String, List<AnalyticsSnapshot>> getSnapshotsByVolatilityLevels() {
+        Map<Predicate<BigDecimal>, String> volatilityCategories = new LinkedHashMap<>();
+
+        volatilityCategories.put(volatility -> volatility.compareTo(BigDecimal.valueOf(0.5)) < 0, "Low Volatility");
+        volatilityCategories.put(volatility -> volatility.compareTo(BigDecimal.valueOf(1.0)) < 0, "Medium Volatility");
+        volatilityCategories.put(volatility -> true, "High Volatility"); // default case
+
+
+        return snapshots
+                .stream()
+                .collect(Collectors.groupingBy(snapshot ->
+                        Optional.ofNullable(snapshot.getVolatility())
+                                .map(volatility -> volatilityCategories.entrySet().stream()
+                                        .filter(entry -> entry.getKey().test(volatility))
+                                        .map(Map.Entry::getValue)
+                                        .findFirst()
+                                        .orElse("Unknown"))
+                                .orElse("Unknown")
+                ));
+    }
+
+    //12. Group By Price Change Percent
+    public Map<String, List<AnalyticsSnapshot>> getSnapshotsByPriceChangePercent() {
+        Map<Predicate<BigDecimal>, String> priceChangeCategories = new LinkedHashMap<>();
+        priceChangeCategories.put(priceChange -> priceChange.compareTo(BigDecimal.valueOf(0)) > 0, "Positive Change");
+        priceChangeCategories.put(priceChange -> priceChange.compareTo(BigDecimal.ZERO) < 0, "Negative Change");
+        priceChangeCategories.put(priceChange -> true, "No Change"); // default case
+
+        return snapshots
+                .stream()
+                .collect(Collectors.groupingBy(snapshot -> Optional.ofNullable(snapshot.getPriceChangePercent24h())
+                        .map(priceChange -> priceChangeCategories.entrySet().stream()
+                                .filter(entry -> entry.getKey().test(priceChange))
+                                .map(Map.Entry::getValue)
+                                .findFirst()
+                                .orElse("Unknown"))
+                        .orElse("Unknown")
+                ));
+    }
+
+    //13. Group by Volume Levels
+    public Map<String, List<AnalyticsSnapshot>> getSnapshotsByVolumeLevels() {
+        Map<Predicate<BigDecimal>, String> volumeCategories = new LinkedHashMap<>();
+        volumeCategories.put(volume -> volume.compareTo(BigDecimal.valueOf(1000000)) < 0, "Low Volume");
+        volumeCategories.put(volume -> volume.compareTo(BigDecimal.valueOf(10000000)) < 0, "Medium Volume");
+        volumeCategories.put(volume -> true, "High Volume"); // default case
+
+        return snapshots
+                .stream()
+                .collect(Collectors.groupingBy(snapshot -> Optional.ofNullable(snapshot.getVolume24h())
+                        .map(volume -> volumeCategories.entrySet().stream()
+                                .filter(entry -> entry.getKey().test(volume))
+                                .map(Map.Entry::getValue)
+                                .findFirst()
+                                .orElse("Unknown"))
+                        .orElse("Unknown")
+                ));
     }
 
 
