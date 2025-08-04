@@ -87,7 +87,8 @@ public class MarketAnalyticsService {
 
     public void validateHistoricalData(List<MarketData> historicalData) {
         if (historicalData == null || historicalData.isEmpty()) {
-            throw new ResourceNotFoundException("Cannot calculate analytics with empty market data.");
+            throw new ResourceNotFoundException(
+                    "Cannot calculate analytics with empty market data.");
         }
     }
 
