@@ -78,26 +78,40 @@ public class TradeEventServiceImpl implements TradeEventService {
 
     @Override
     public List<TradeEvent> sortByTimestampDesc(List<TradeEvent> events) {
-        return List.of();
+        return events
+                .stream()
+                .sorted(Comparator.comparing(TradeEvent::getTimestamp).reversed())
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<String> getDistinctSymbols(List<TradeEvent> events) {
-        return List.of();
+        return events
+                .stream()
+                .map(TradeEvent::getSymbol)
+                .distinct()
+                .toList();
     }
 
     @Override
     public List<TradeEvent> filterByTimeRange(List<TradeEvent> events, LocalDateTime from, LocalDateTime to) {
-        return List.of();
+        return events
+                .stream()
+                .filter(tradeEvent -> !tradeEvent.getTimestamp().isBefore(from) && !tradeEvent.getTimestamp().isAfter(to))
+                .collect(Collectors.toList());
     }
 
     @Override
     public boolean allTradesAbovePrice(List<TradeEvent> events, BigDecimal price) {
-        return false;
+        return events
+                .stream()
+                .allMatch(tradeEvent -> tradeEvent.getPrice().compareTo(price) > 0);
     }
 
     @Override
     public long countSellTrades(List<TradeEvent> events) {
-        return 0;
+        return events.stream()
+                .filter(TradeEvent::isSell)
+                .count();
     }
 }
