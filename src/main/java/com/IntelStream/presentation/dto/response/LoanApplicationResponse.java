@@ -1,4 +1,4 @@
-package com.IntelStream.presentation.dto.request;
+package com.IntelStream.presentation.dto.response;
 
 
 import com.IntelStream.infrastructure.persistence.enums.LoanStatus;

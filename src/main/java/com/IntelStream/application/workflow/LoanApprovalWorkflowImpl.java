@@ -1,7 +1,6 @@
-package com.intelstream.application.workflow.impl;
+package com.IntelStream.application.workflow;
 
 import com.IntelStream.application.activity.LoanProcessingActivities;
-import com.IntelStream.application.workflow.LoanApprovalWorkflow;
 import com.IntelStream.domain.model.ActivityResult;
 import com.IntelStream.infrastructure.persistence.enums.LoanStatus;
 import com.IntelStream.infrastructure.persistence.enums.OrchestrationStep;
@@ -9,16 +8,14 @@ import com.IntelStream.presentation.dto.request.LoanRequest;
 import io.temporal.activity.ActivityOptions;
 import io.temporal.common.RetryOptions;
 import io.temporal.failure.ApplicationFailure;
-import io.temporal.workflow.*;
+import io.temporal.workflow.Workflow;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-@Component
 @Slf4j
 public class LoanApprovalWorkflowImpl implements LoanApprovalWorkflow {
 

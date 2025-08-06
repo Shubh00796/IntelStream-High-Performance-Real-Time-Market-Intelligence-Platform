@@ -2,7 +2,7 @@ package com.IntelStream.infrastructure.persistence.mapper;
 
 
 import com.IntelStream.infrastructure.persistence.entity.LoanApplication;
-import com.IntelStream.presentation.dto.request.LoanApplicationResponse;
+import com.IntelStream.presentation.dto.response.LoanApplicationResponse;
 import com.IntelStream.presentation.dto.request.LoanRequest;
 import org.mapstruct.Mapper;
 
