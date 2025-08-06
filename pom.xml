@@ -102,6 +102,17 @@
 			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Temporal.io Dependencies -->
+		<dependency>
+			<groupId>io.temporal</groupId>
+			<artifactId>temporal-sdk</artifactId>
+			<version>1.20.1</version>
+		</dependency>
+		<dependency>
+			<groupId>io.temporal</groupId>
+			<artifactId>temporal-spring-boot-autoconfigure-alpha</artifactId>
+			<version>1.20.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
