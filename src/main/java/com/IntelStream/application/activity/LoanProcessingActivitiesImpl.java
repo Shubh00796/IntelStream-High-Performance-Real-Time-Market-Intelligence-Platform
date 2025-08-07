@@ -25,21 +25,25 @@ public class LoanProcessingActivitiesImpl implements LoanProcessingActivities {
     @Transactional
     public ActivityResult persistApplication(LoanRequest request, String workflowId, String runId) {
         return safeExec("persistApplication", () -> {
-            LoanApplication entity = LoanApplication.builder()
-                    .applicantName(request.getApplicantName())
-                    .email(request.getEmail())
-                    .amount(request.getAmount())
-                    .purpose(request.getPurpose())
-                    .ssn(request.getSsn())
-                    .annualIncome(request.getAnnualIncome())
-                    .status(LoanStatus.PENDING)
-                    .currentStep(OrchestrationStep.CREDIT_CHECK)
-                    .workflowId(workflowId)
-                    .runId(runId)
-                    .build();
-            LoanApplication saved = repo.save(entity);
-            return success(saved.getApplicationId());
+            return getActivityResult(request, workflowId, runId);
         });
+    }
+
+    private ActivityResult getActivityResult(LoanRequest request, String workflowId, String runId) {
+        LoanApplication entity = LoanApplication.builder()
+                .applicantName(request.getApplicantName())
+                .email(request.getEmail())
+                .amount(request.getAmount())
+                .purpose(request.getPurpose())
+                .ssn(request.getSsn())
+                .annualIncome(request.getAnnualIncome())
+                .status(LoanStatus.PENDING)
+                .currentStep(OrchestrationStep.CREDIT_CHECK)
+                .workflowId(workflowId)
+                .runId(runId)
+                .build();
+        LoanApplication saved = repo.save(entity);
+        return success(saved.getApplicationId());
     }
 
     @Override
