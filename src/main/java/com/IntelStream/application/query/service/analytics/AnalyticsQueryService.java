@@ -9,6 +9,9 @@ import com.IntelStream.domain.service.analytics.MarketAnalyticsService;
 import com.IntelStream.infrastructure.persistence.mapper.AnalyticsSnapshotMapper;
 import com.IntelStream.presentation.dto.response.AnalyticsResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,10 +29,16 @@ public class AnalyticsQueryService {
     private final MarketDataRepository marketDataRepository;
     private final MarketAnalyticsService marketAnalyticsService;
 
+    @Cacheable(cacheNames = "analytics", key = "'id:' + #id")
+    @CircuitBreaker(name = "default")
+    @Retry(name = "default")
     public AnalyticsResponse getById(Long id) {
         return mapOrThrow(repo.findById(id), "AnalyticsSnapshot not found with ID: " + id);
     }
 
+    @Cacheable(cacheNames = "analytics", key = "'latest:' + #instrumentId")
+    @CircuitBreaker(name = "default")
+    @Retry(name = "default")
     public AnalyticsResponse getLatestByInstrument(Long instrumentId) {
         return mapOrThrow(repo.findLatestByInstrumentId(instrumentId), "No analytics available for instrument: " + instrumentId);
     }
