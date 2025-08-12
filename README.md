@@ -299,3 +299,149 @@ Feel free to open an issue or reach out via GitHub Discussions.
 
 
 
+
+---
+
+## 🔒 New: Security, Caching, Resilience, Metrics (Production-grade)
+
+The project now includes hardened, production-ready capabilities while adhering to SOLID/KISS/DRY and clean architecture principles. No existing content was removed; this section highlights the new additions.
+
+- **Security (Spring Security 6, stateless)**
+  - Permit: `/v3/api-docs/**`, `/swagger-ui.html`, `/swagger-ui/**`, `/api/public/**`
+  - Roles: `/api/admin/**` → `ADMIN`, `/api/market-data/**` → `TRADER`, `/actuator/**` → `ADMIN`
+  - CSRF disabled for stateless APIs, CORS enabled with `CorsConfigurationSource`
+- **Caching (Redis)**
+  - Read paths cached using `@Cacheable` with TTLs via `RedisCacheManager`
+  - Write paths invalidate caches using `@CacheEvict` (prevents stale reads)
+  - Cache names: `marketData`, `analytics`, `instruments`
+- **Resilience (Resilience4j)**
+  - Global defaults via beans and properties for `CircuitBreaker`, `Retry`, `TimeLimiter`
+  - Applied annotations on read-heavy services (idempotent operations)
+- **Observability (Micrometer + Prometheus)**
+  - Actuator metrics exposed at `/actuator/prometheus`
+  - Useful for Grafana dashboards and SLO monitoring
+- **API Docs (springdoc-openapi)**
+  - Swagger UI: `/swagger-ui/index.html`
+  - OpenAPI JSON: `/v3/api-docs`
+
+### 🧩 Architecture addendum (Resilience + Caching)
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API as REST Controller
+    participant SVC as Service (CQRS)
+    participant CB as CircuitBreaker/Retry
+    participant Cache as Redis Cache
+    participant DB as MySQL
+
+    Client->>API: GET /api/…
+    API->>SVC: delegate()
+    SVC->>Cache: @Cacheable get(key)
+    alt cache hit
+        Cache-->>SVC: value
+        SVC-->>API: DTO
+    else cache miss
+        SVC->>CB: execute(supplier)
+        CB->>DB: query
+        DB-->>CB: rows
+        CB-->>SVC: entities
+        SVC->>Cache: put(key, value)
+        SVC-->>API: DTO
+    end
+    API-->>Client: 200 OK
+```
+
+---
+
+## ⚙️ Configuration (Environment-first)
+
+All sensitive/configurable values can be set via environment variables. Sensible local defaults remain.
+
+```properties
+# Database
+DB_URL=jdbc:mysql://localhost:3306/blogapplication?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+DB_USER=root
+DB_PASSWORD=change_me
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# Temporal (optional)
+TEMPORAL_NAMESPACE=default
+TEMPORAL_TARGET=localhost:7233
+TEMPORAL_TASK_QUEUE=LOAN_PROCESSING_QUEUE
+```
+
+Relevant Spring properties (already set in `application.properties`):
+
+```properties
+management.endpoints.web.exposure.include=health,info,metrics,prometheus
+management.endpoint.health.show-details=when_authorized
+```
+
+---
+
+## 🔍 Endpoints (Docs, Health, Metrics)
+
+- **Swagger UI**: `http://localhost:7777/swagger-ui/index.html`
+- **OpenAPI JSON**: `http://localhost:7777/v3/api-docs`
+- **Actuator (Prometheus)**: `http://localhost:7777/actuator/prometheus`
+- **Health**: `http://localhost:7777/actuator/health`
+
+Note: Security restrictions apply. `ADMIN` role is required for `/actuator/**` except where exposure is configured.
+
+---
+
+## 🧠 Defaults and Policies
+
+- **Caching strategy**
+  - `instruments`: long-lived, entity lookups (keys: `id:{id}`, `symbol:{symbol}`, `exchange:{id|code}`)
+  - `analytics`: medium TTL for computed snapshots
+  - `marketData`: short TTL for near real-time data
+  - Writes (`create/deactivate/update/bulk`) perform `@CacheEvict(allEntries = true)` on affected caches
+
+- **Resilience defaults** (overridable per instance)
+  - CircuitBreaker: 50% failure rate, 10-size window, min 5 calls, 60s open-state wait
+  - Retry: 3 attempts, 100ms backoff
+  - TimeLimiter: 5s timeout
+
+- **Transactions**
+  - Command services use `@Transactional(isolation = READ_COMMITTED)`
+  - Query services opt into read-only where applicable
+
+---
+
+## 🚀 Running with Redis (optional but recommended)
+
+```bash
+# Using Docker
+docker run --name redis -p 6379:6379 -d redis:7
+
+# Verify locally
+redis-cli -h localhost -p 6379 ping  # -> PONG
+```
+
+The application will auto-connect using `spring.data.redis.*` properties.
+
+---
+
+## ✅ Build/Run Quickstart (updated)
+
+```bash
+mvn clean package -DskipTests
+mvn spring-boot:run
+
+# URLs
+# Swagger:      http://localhost:7777/swagger-ui/index.html
+# OpenAPI:      http://localhost:7777/v3/api-docs
+# Prometheus:   http://localhost:7777/actuator/prometheus
+```
+
+---
+
+## 📌 Notes
+
+- The repo now includes dependencies for: Spring Security, Spring Data Redis, Resilience4j, Micrometer Prometheus, and springdoc-openapi.
+- If you deploy in environments that enforce Java 17 LTS, the codebase remains compatible. The Maven `java.version` may be set higher; align to 17 if required by your runtime.
