@@ -6,11 +6,13 @@ import com.IntelStream.domain.repository.ExchangeRepository;
 import com.IntelStream.infrastructure.persistence.mapper.ExchangeMapper;
 import com.IntelStream.presentation.dto.response.ExchangeResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,12 +22,18 @@ public class ExchangeQueryService {
     private final ExchangeRepository exchangeRepository;
     private final ExchangeMapper exchangeMapper;
 
+    @Cacheable(cacheNames = "instruments", key = "'exchange:' + #id")
+    @CircuitBreaker(name = "default")
+    @Retry(name = "default")
     public ExchangeResponse getById(Long id) {
         Exchange exchange = exchangeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Exchange not found with ID: " + id));
         return exchangeMapper.toResponse(exchange);
     }
 
+    @Cacheable(cacheNames = "instruments", key = "'exchange:code:' + #code")
+    @CircuitBreaker(name = "default")
+    @Retry(name = "default")
     public ExchangeResponse getByCode(String code) {
         Exchange exchange = exchangeRepository.findByCode(code)
                 .orElseThrow(() -> new IllegalArgumentException("Exchange not found with code: " + code));

@@ -7,7 +7,9 @@ import com.IntelStream.domain.repository.InstrumentRepository;
 import com.IntelStream.infrastructure.persistence.mapper.InstrumentMapper;
 import com.IntelStream.presentation.dto.response.InstrumentResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.cache.annotation.Cacheable;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class InstrumentQueryService {
     private final InstrumentRepository repo;
     private final InstrumentMapper mapper;
 
+    @Cacheable(cacheNames = "instruments", key = "'id:' + #id")
+    @CircuitBreaker(name = "default")
+    @Retry(name = "default")
     public InstrumentResponse getById(Long id) {
         return repo.findById(id)
                 .map(mapper::toResponse)
@@ -39,6 +44,9 @@ public class InstrumentQueryService {
 
 
 
+    @Cacheable(cacheNames = "instruments", key = "'symbol:' + #symbol")
+    @CircuitBreaker(name = "default")
+    @Retry(name = "default")
     public InstrumentResponse getBySymbol(String symbol) {
         return repo.findBySymbol(symbol)
                 .map(mapper::toResponse)

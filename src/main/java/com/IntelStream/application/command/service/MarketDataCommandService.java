@@ -9,6 +9,7 @@ import com.IntelStream.domain.model.MarketData;
 import com.IntelStream.domain.repository.InstrumentRepository;
 import com.IntelStream.domain.repository.MarketDataRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class MarketDataCommandService {
      * Updates a single market data entry.
      */
     @Transactional(isolation = Isolation.READ_COMMITTED) // ✅ Default and safe for most cases
+    @CacheEvict(cacheNames = {"marketData", "analytics"}, allEntries = true)
     public Long updateMarketData(UpdateMarketDataCommand command) {
         log.debug("Starting update for instrument ID: {}", command.getInstrumentId());
 
@@ -48,6 +50,7 @@ public class MarketDataCommandService {
      * Performs bulk update of market data entries.
      */
     @Transactional(isolation = Isolation.READ_COMMITTED)
+    @CacheEvict(cacheNames = {"marketData", "analytics"}, allEntries = true)
     public int bulkUpdateMarketData(BulkUpdateMarketDataCommand cmd) {
         log.info("Starting bulk update. Batch ID: {}, Entries: {}", cmd.getBatchId(), cmd.getMarketDataList().size());
 
