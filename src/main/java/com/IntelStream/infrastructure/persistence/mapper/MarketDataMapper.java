@@ -18,21 +18,11 @@ public interface MarketDataMapper {
 
     MarketDataEntity toEntity(MarketData marketData);
 
-    @Mappings({
-            @Mapping(target = "spread", source = ".", qualifiedByName = "calculateSpread")
-    })
+
     MarketDataResponse toResponse(MarketData marketData);
 
     TopMoversQuery moversToResponce(MarketData marketData);
 
-
-    @Named("calculateSpread")
-    default BigDecimal calculateSpread(MarketData data) {
-        if (data.getAskPrice() != null && data.getBidPrice() != null) {
-            return data.getAskPrice().subtract(data.getBidPrice());
-        }
-        return BigDecimal.ZERO;
-    }
 
 
     MarketData toDomainEntity(MarketDataResponse responseDto);

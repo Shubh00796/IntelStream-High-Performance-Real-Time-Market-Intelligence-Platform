@@ -1,12 +1,13 @@
 package com.IntelStream.domain.model;
 
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Instrument {
     Long id;

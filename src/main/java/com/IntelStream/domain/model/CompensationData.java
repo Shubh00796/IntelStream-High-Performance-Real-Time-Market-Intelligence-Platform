@@ -5,8 +5,9 @@ import lombok.*;
 
 import java.util.List;
 
-@Value
-@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor@Builder
 public class CompensationData {
     String applicationId;
     String stepFailed;

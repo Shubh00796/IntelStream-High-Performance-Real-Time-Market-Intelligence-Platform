@@ -1,13 +1,14 @@
 package com.IntelStream.presentation.dto.response;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Jacksonized
 public class MarketDataResponse {
@@ -23,8 +24,11 @@ public class MarketDataResponse {
     LocalDateTime timestamp;
     String source;
 
-    // Additional computed fields
-    BigDecimal spread;
-    BigDecimal priceChangePercent;
-    BigDecimal volumeChangePercent;
+
+
+    @Builder.Default
+    BigDecimal priceChangePercent = BigDecimal.ZERO;
+
+    @Builder.Default
+    BigDecimal volumeChangePercent = BigDecimal.ZERO;
 }

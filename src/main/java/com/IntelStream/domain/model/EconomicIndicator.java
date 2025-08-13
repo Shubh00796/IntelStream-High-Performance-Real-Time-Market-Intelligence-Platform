@@ -1,15 +1,16 @@
 package com.IntelStream.domain.model;
 
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 import java.time.LocalDate;
 
 /**
  * Represents a time-based macroeconomic indicator like GDP, inflation, etc.
  */
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class EconomicIndicator {
     Long id;

@@ -1,13 +1,14 @@
 package com.IntelStream.presentation.dto.response;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Value
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Builder
 @Jacksonized
 public class InstrumentResponse {

@@ -1,11 +1,13 @@
 package com.IntelStream.domain.model;
 
 
-import lombok.Value;
-import lombok.Builder;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Exchange {
     Long id;

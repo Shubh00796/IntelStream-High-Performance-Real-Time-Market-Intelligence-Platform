@@ -1,13 +1,14 @@
 package com.IntelStream.domain.model;
 
 
-import lombok.Value;
-import lombok.Builder;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class MarketData {
     Long id;

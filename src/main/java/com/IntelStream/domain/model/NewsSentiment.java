@@ -1,15 +1,16 @@
 package com.IntelStream.domain.model;
 
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 /**
  * Represents sentiment extracted from a news article related to a financial instrument.
  */
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class NewsSentiment {
     Long newsId;

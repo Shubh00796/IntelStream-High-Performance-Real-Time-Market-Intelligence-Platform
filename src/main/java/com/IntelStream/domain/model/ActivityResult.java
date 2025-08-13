@@ -4,8 +4,10 @@ package com.IntelStream.domain.model;
 
 import lombok.*;
 
-@Value
 @Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ActivityResult {
     boolean success;
     String message;

@@ -1,15 +1,16 @@
 package com.IntelStream.domain.model;
 
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 /**
  * Represents an alert triggered by a predefined stock condition.
  */
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class StockAlert {
     Long alertId;

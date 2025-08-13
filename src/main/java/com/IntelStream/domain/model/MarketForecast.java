@@ -1,8 +1,7 @@
 package com.IntelStream.domain.model;
 
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,7 +9,9 @@ import java.time.LocalDateTime;
 /**
  * Represents a future market forecast for a financial instrument.
  */
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class MarketForecast {
     Long forecastId;

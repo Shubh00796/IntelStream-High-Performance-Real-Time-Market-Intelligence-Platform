@@ -1,8 +1,7 @@
 package com.IntelStream.domain.model;
 
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,7 +9,9 @@ import java.time.LocalDateTime;
 /**
  * Represents a real-time trade event for a given instrument.
  */
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class TradeEvent {
     Long tradeId;
