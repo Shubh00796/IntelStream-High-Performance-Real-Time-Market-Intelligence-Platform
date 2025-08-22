@@ -158,6 +158,13 @@ public class AnalyticsSnapshotProcessor {
                         .orElse("Unknown")
                 ));
     }
+    // Filter by InstrumentId and Volatility
+    public List<AnalyticsSnapshot> filterByInstrumentIdAndVolatility(Long instrumentId, BigDecimal volatility) {
+        return snapshots
+                .stream()
+                .filter(analyticsSnapshot -> analyticsSnapshot.getInstrumentId().equals(instrumentId) && analyticsSnapshot.getVolatility().equals(volatility))
+                .toList();
+    }
 
  
 
